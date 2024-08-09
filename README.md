@@ -58,6 +58,17 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+## TypeORM
+```bash
+# Generate Migration
+$ yarn run migration:generate --name=your_migration_name
+
+# Run Your Migration 
+$ yarn run migration:run
+```
+more about this 
+https://dev.to/amirfakour/using-typeorm-migration-in-nestjs-with-postgres-database-3c75
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
