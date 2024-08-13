@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -14,12 +14,15 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  private readonly logger = new Logger(UserService.name);
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(createUserDto);
     return await this.userRepository.save(newUser);
   }
 
   findAll() {
+    this.logger.log('Hi, A user try to find all user');
     return this.userRepository.find();
   }
 

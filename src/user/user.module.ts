@@ -9,5 +9,6 @@ import { ContactModule } from './contact/contact.module';
   imports: [TypeOrmModule.forFeature([User]), ContactModule],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

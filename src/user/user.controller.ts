@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   Res,
+  ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Response } from 'express';
+import { AuthenticationGuard } from 'src/guards/authentication.guard';
 
 @Controller('user')
 export class UserController {
@@ -23,13 +26,14 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @UseGuards(AuthenticationGuard)
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(+id);
   }
 
@@ -44,7 +48,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Res() res: Response) {
+  remove(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     return this.userService.remove(+id, res);
   }
 }
