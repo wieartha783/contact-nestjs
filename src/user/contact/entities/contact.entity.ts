@@ -16,6 +16,9 @@ export class Contact {
   email: string;
 
   @Column()
+  phone: string;
+
+  @Column()
   address: string;
 
   @Column({ nullable: true })
