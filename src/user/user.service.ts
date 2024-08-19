@@ -5,6 +5,7 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 
 @Injectable()
@@ -17,6 +18,12 @@ export class UserService {
   private readonly logger = new Logger(UserService.name);
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const saltRounds = process.env.SALT_ROUND ?? '10';
+    const password = await bcrypt.hash(
+      createUserDto.password,
+      parseInt(saltRounds),
+    );
+    createUserDto.password = password;
     const newUser = this.userRepository.create(createUserDto);
     return await this.userRepository.save(newUser);
   }
@@ -68,5 +75,16 @@ export class UserService {
     res
       .status(HttpStatus.OK)
       .json({ message: `User ${user.username} deleted` });
+  }
+
+  async findWithLogin(username: string): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({ username });
+    if (user === null) {
+      throw new HttpException(
+        `User with ${username} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return user;
   }
 }

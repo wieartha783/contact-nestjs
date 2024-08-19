@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { AuthenticationGuard } from 'src/guards/authentication.guard';
 
+@UseGuards(AuthenticationGuard)
 @Controller('contact')
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}

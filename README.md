@@ -61,12 +61,12 @@ $ yarn run test:cov
 ## TypeORM
 ```bash
 # Generate Migration
-$ yarn run migration:generate --name=your_migration_name
+$ npm run migration:generate --name=your_migration_name
 
 # Run Your Migration 
-$ yarn run migration:run
+$ npm run migration:run
 ```
-more about this 
+more about this
 https://dev.to/amirfakour/using-typeorm-migration-in-nestjs-with-postgres-database-3c75
 
 ## Support

@@ -32,11 +32,13 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @UseGuards(AuthenticationGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(+id);
   }
 
+  @UseGuards(AuthenticationGuard)
   @Patch(':id')
   async update(
     @Param('id') id: number,
@@ -47,6 +49,7 @@ export class UserController {
     return updatedUser;
   }
 
+  @UseGuards(AuthenticationGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     return this.userService.remove(+id, res);

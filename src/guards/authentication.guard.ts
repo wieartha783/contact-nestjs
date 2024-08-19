@@ -35,7 +35,6 @@ export class AuthenticationGuard implements CanActivate {
       throw new HttpException('Bad token provided', HttpStatus.BAD_REQUEST);
     }
 
-    this.logger.log('Guard Called ', request.Body);
     return true;
   }
 }

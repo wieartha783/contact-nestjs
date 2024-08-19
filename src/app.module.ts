@@ -8,6 +8,7 @@ import { GlobalModule } from './global/global.module';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { UserController } from './user/user.controller';
 import { ContactController } from './user/contact/contact.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ContactController } from './user/contact/contact.controller';
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     GlobalModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
