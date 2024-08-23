@@ -30,9 +30,10 @@ export class UserService {
     return await this.userRepository.save(newUser);
   }
 
-  findAll() {
+  async findAll(): Promise<User[]> {
     this.logger.log('Hi, A user try to find all user');
-    return this.userRepository.find();
+    const users = await this.userRepository.find();
+    return users.map((user) => plainToClass(UserDto, user));
   }
 
   async findOne(id: number): Promise<User> {
