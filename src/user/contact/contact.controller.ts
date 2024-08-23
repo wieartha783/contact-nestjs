@@ -12,6 +12,7 @@ import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
+import { ContactOwnerGuard } from './guards/contactOwner.guards';
 
 @UseGuards(AuthenticationGuard)
 @Controller('contact')
@@ -34,6 +35,7 @@ export class ContactController {
   }
 
   @Patch(':id')
+  @UseGuards(ContactOwnerGuard)
   update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto) {
     return this.contactService.update(+id, updateContactDto);
   }

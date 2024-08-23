@@ -1,17 +1,19 @@
 import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { UserModule } from 'src/user/user.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { ContactModule } from 'src/user/contact/contact.module';
 
 @Global()
 @Module({
   imports: [
-    UserModule,
+    ContactModule,
     JwtModule.register({
       global: true,
       secret: process.env.SECRET_KEY,
       signOptions: { expiresIn: '3600s' },
     }),
+    AuthModule,
   ],
-  exports: [UserModule, JwtModule],
+  exports: [JwtModule, AuthModule],
 })
 export class GlobalModule {}

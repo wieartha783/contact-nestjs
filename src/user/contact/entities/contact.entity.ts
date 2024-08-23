@@ -24,6 +24,9 @@ export class Contact {
   @Column({ nullable: true })
   postCode: string;
 
-  @ManyToOne(() => User, (user) => user.contacts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.contacts, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   user: User;
 }

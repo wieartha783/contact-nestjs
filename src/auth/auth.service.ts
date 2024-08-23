@@ -1,6 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
 type UserWithoutPassword = {
@@ -21,6 +27,7 @@ export class AuthService {
     if (user === null) {
       throw new HttpException(`Can't find the user`, HttpStatus.NOT_FOUND);
     }
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (isMatch === false) {
@@ -41,5 +48,15 @@ export class AuthService {
     };
   }
 
-  jwtSign = (payload: UserWithoutPassword) => this.jwtService.sign(payload);
+  async getUserFromAToken(token: string): Promise<User> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token);
+      console.log('Payload:', payload);
+      return await this.userSrvice.findOne(payload.id);
+    } catch (error) {
+      console.error('Error verifying token:', error);
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
+  // jwtSign = (payload: UserWithoutPassword) => this.jwtService.sign(payload);
 }

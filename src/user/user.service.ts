@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
+import { UserDto } from './dto/user.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -40,7 +42,7 @@ export class UserService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    return userData;
+    return plainToClass(UserDto, userData);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {

@@ -2,39 +2,33 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  Logger,
   UnauthorizedException,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
-  constructor(private jwtSevice: JwtService) {}
+  constructor(private jwtService: JwtService) {}
 
-  private readonly logger = new Logger(AuthenticationGuard.name);
-
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    if (request.headers.authorization === undefined) {
-      throw new UnauthorizedException('No athentication details provided');
-    }
-
-    const token = request.headers.authorization.split(' ')[1] ?? null;
-
-    if (token === null) {
+    const token = this.extractTokenFromHeader(request);
+    if (!token || token == undefined) {
       throw new UnauthorizedException();
     }
 
-    if (!this.jwtSevice.verify(token)) {
-      throw new HttpException('Bad token provided', HttpStatus.BAD_REQUEST);
+    try {
+      this.jwtService.verify(token);
+      return true;
+    } catch {
+      throw new UnauthorizedException();
     }
+  }
 
-    return true;
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
