@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from '../user.service';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class ContactService {
@@ -31,13 +32,20 @@ export class ContactService {
     return await this.contactRepository.find();
   }
 
+  async findWhere(user: User): Promise<Contact[]> {
+    return await this.contactRepository.find({
+      where: {
+        user: user
+      }
+    });
+  }
+
   async findOne(id: number): Promise<Contact> {
     const contact = await this.contactRepository.findOneBy({ id });
 
     if (!contact) {
       throw new HttpException('Contact not found', HttpStatus.NOT_FOUND);
     }
-
     return contact;
   }
 

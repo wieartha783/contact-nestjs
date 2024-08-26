@@ -13,6 +13,8 @@ import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { ContactOwnerGuard } from './guards/contactOwner.guards';
+import { CurrentUser } from 'src/auth/userDecorator';
+import { User } from '../entities/user.entity';
 
 @UseGuards(AuthenticationGuard)
 @Controller('contact')
@@ -25,8 +27,9 @@ export class ContactController {
   }
 
   @Get()
-  findAll() {
-    return this.contactService.findAll();
+  findAll(@CurrentUser() user: User) {
+    console.log('user', user);
+    return this.contactService.findWhere(user);
   }
 
   @Get(':id')
