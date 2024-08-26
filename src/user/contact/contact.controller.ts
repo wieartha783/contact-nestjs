@@ -28,7 +28,6 @@ export class ContactController {
 
   @Get()
   findAll(@CurrentUser() user: User) {
-    console.log('user', user);
     return this.contactService.findWhere(user);
   }
 
