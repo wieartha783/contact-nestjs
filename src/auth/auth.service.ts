@@ -52,7 +52,6 @@ export class AuthService {
   async getUserFromAToken(token: string): Promise<User> {
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      console.log('Payload:', payload);
       return await this.userSrvice.findOne(payload.id);
     } catch (error) {
       console.error('Error verifying token:', error);

@@ -41,8 +41,8 @@ export class UserController {
   @UseGuards(AuthenticationGuard)
   @Patch(':id')
   async update(
-    @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
+    @Param('id', ParseIntPipe) id: number
   ): Promise<User> {
     const updatedUser = await this.userService.update(id, updateUserDto);
 
@@ -51,7 +51,7 @@ export class UserController {
 
   @UseGuards(AuthenticationGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    return this.userService.remove(+id, res);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.remove(+id);
   }
 }

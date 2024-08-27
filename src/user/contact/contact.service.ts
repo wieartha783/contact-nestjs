@@ -41,11 +41,12 @@ export class ContactService {
   }
 
   async findOne(id: number): Promise<Contact> {
-    const contact = await this.contactRepository.findOneBy({ id });
+    const contact = await this.contactRepository.findOne({where:{ id }});
 
     if (!contact) {
       throw new HttpException('Contact not found', HttpStatus.NOT_FOUND);
     }
+
     return contact;
   }
 

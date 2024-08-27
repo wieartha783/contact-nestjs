@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { DataSource, Repository } from "typeorm";
+import { DataSource, QueryFailedError, Repository } from "typeorm";
 import { UserService } from "./user.service";
 import { User } from "./entities/user.entity";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -7,6 +7,8 @@ import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { Contact } from "../user/contact/entities/contact.entity";
 import { dataSourceOptions } from '../test-utils/TypeORMSQLITETestingModule';
 import { testDatasetSeed } from '../test-utils/testDataset.seed';
+import { plainToClass } from 'class-transformer';
+import { UserDto } from './dto/user.dto';
 
 // Mock the bcrypt module
 jest.mock('bcrypt');
@@ -65,7 +67,7 @@ describe('UserService', ()=> {
     it('canFindOneAllUserAndRemovePassword', async () => {
         const users = await userService.findAll();
         
-        const allUser = await userRepository.find();
+        const allUser = await userRepository.find(); // Get the user from repository
         
         const newResult = allUser.map((user) => {
             const {password, ...userWithoutPassword} = user;
@@ -82,15 +84,26 @@ describe('UserService', ()=> {
             "password": "@Password1234"
         };
 
-        (bcrypt.hash as jest.Mock).mockResolvedValueOnce('$2b$10$gQxhplR/l/1PrdsQu8bHt.Kmod4LPD3pPlvv7uvZr9.hz.gN.kJd6');
+        (bcrypt.hash as jest.Mock).mockResolvedValue('$2b$10$gQxhplR/l/1PrdsQu8bHt.Kmod4LPD3pPlvv7uvZr9.hz.gN.kJd6');
 
         const userCreated = await userService.create(newUser);
         const expectedUserCreated = await userRepository.findOneBy({username: 'johnNew', email: 'johnNew@john.com'});
 
         expect(userCreated).toEqual(expectedUserCreated);
-    
         expect(userCreated.password).toEqual('$2b$10$gQxhplR/l/1PrdsQu8bHt.Kmod4LPD3pPlvv7uvZr9.hz.gN.kJd6');
-        
+
+        try {
+            await userService.create({
+                username: "johnNew",
+                email: "johnNew@john.com",
+                password: "@Password1234"
+            });
+            // If no error is thrown, fail the test
+            fail('Expected an HttpException to be thrown');
+        } catch (error) {
+            expect(error).toBeInstanceOf(QueryFailedError);
+            expect(error.message).toContain('UNIQUE constraint failed');
+        }
     });
 
     it('canUpdateAUser', async () => {
@@ -99,7 +112,7 @@ describe('UserService', ()=> {
         }
 
         const result = await userService.update(1, updatedPayload);
-        const updatedUserRepo = await userRepository.findOneBy({id : 1})
+        const updatedUserRepo = plainToClass(UserDto, await userRepository.findOneBy({id : 1})); 
 
         expect(result).toEqual(updatedUserRepo);
 
@@ -110,5 +123,28 @@ describe('UserService', ()=> {
         const userResult = await userService.findWithLogin(username);
 
         expect(userResult?.username).toEqual(username);
+    });
+
+    it('canDeleteUser', async () => {
+
+        const newInsertedUser = await userRepository.insert([{
+            id: 100,
+            username: 'johnTestDelete',
+            email: 'doeDelete@john.com',
+            password: 'passwordDeleted',
+            createdAt: new Date('2024-08-22T18:50:43.001Z'),
+            updatedAt: new Date('2024-08-22T18:50:43.001Z')
+        }]);
+
+        const result = await userService.remove(100);
+
+        expect(result).toEqual({
+            id: undefined,
+            username: 'johnTestDelete',
+            password: 'passwordDeleted',
+            email: 'doeDelete@john.com',
+            createdAt: new Date('2024-08-22T18:50:43.001Z'),
+            updatedAt: new Date('2024-08-22T18:50:43.001Z')
+          });
     });
 });

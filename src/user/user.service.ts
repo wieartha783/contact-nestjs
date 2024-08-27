@@ -63,21 +63,19 @@ export class UserService {
       );
     }
 
-    return userDataUpdated;
+    return plainToClass(UserDto, userDataUpdated);
   }
 
-  async remove(id: number, res: Response): Promise<void> {
+  async remove(id: number) {
     const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    await this.userRepository.remove(user);
+    const deletedUser = await this.userRepository.remove(user);
 
-    res
-      .status(HttpStatus.OK)
-      .json({ message: `User ${user.username} deleted` });
+    return deletedUser;
   }
 
   async findWithLogin(username: string): Promise<User | null> {

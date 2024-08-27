@@ -32,17 +32,19 @@ export class ContactController {
   }
 
   @Get(':id')
+  @UseGuards(ContactOwnerGuard)
   findOne(@Param('id') id: string) {
     return this.contactService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(ContactOwnerGuard)
+  @UseGuards(ContactOwnerGuard) // Example on how we can create custom guards for our endpoint
   update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto) {
     return this.contactService.update(+id, updateContactDto);
   }
 
   @Delete(':id')
+  @UseGuards(ContactOwnerGuard)
   remove(@Param('id') id: string) {
     return this.contactService.remove(+id);
   }
