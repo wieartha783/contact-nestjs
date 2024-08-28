@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Res,
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
@@ -14,8 +13,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Response } from 'express';
-import { AuthenticationGuard } from 'src/guards/authentication.guard';
+import { AuthenticationGuard } from '../guards/authentication.guard';
 
 @Controller('user')
 export class UserController {

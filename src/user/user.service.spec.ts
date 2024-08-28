@@ -147,4 +147,8 @@ describe('UserService', ()=> {
             updatedAt: new Date('2024-08-22T18:50:43.001Z')
           });
     });
+
+    afterAll(async () => {
+        await dataSource.destroy(); // Clean up the in-memory database
+    });
 });

@@ -10,7 +10,7 @@ import { Request } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { ContactService } from 'src/user/contact/contact.service';
 
-@Injectable() // @Todo: I want use (@CurrentUser() user: User here, how can I add it propperly?
+@Injectable()
 export class ContactOwnerGuard implements CanActivate {
   constructor(
     private authService: AuthService,
@@ -25,12 +25,8 @@ export class ContactOwnerGuard implements CanActivate {
     // Extract contact ID from the request URL
     const contactId = request.params.id;
 
-    console.log(contactId);
-
     // Fetch the contact and check if it belongs to the user
     const contact = await this.contactService.findOne(contactId);
-
-    console.log(contact);
 
     if (!contact || contact.user.id !== user.id) {
       throw new UnauthorizedException('You do not have access to this contact');
