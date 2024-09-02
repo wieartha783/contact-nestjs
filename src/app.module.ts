@@ -9,12 +9,14 @@ import { AuthMiddleware } from './middleware/auth.middleware';
 import { UserController } from './user/user.controller';
 import { ContactController } from './user/contact/contact.controller';
 import { UserModule } from './user/user.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    CacheModule.register(),
     TypeOrmModule.forRoot(dataSourceOptions),
     GlobalModule,
     UserModule,
